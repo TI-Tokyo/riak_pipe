@@ -90,11 +90,7 @@
 -include("riak_pipe.hrl").
 -include("stacktrace.hrl").
 
--ifdef(namespaced_types).
 -type riak_pipe_w_reduce_dict() :: dict:dict().
--else.
--type riak_pipe_w_reduce_dict() :: dict().
--endif.
 
 -record(state, {accs :: riak_pipe_w_reduce_dict(),
                 p :: riak_pipe_vnode:partition(),

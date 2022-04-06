@@ -56,11 +56,7 @@
 -include("riak_pipe_debug.hrl").
 -include("stacktrace.hrl").
 
--ifdef(namespaced_types).
 -type riak_pipe_vnode_queue() :: queue:queue().
--else.
--type riak_pipe_vnode_queue() :: queue().
--endif.
 
 -export_type([chashfun/0,
               chash/0,
