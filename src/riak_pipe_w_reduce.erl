@@ -87,8 +87,9 @@
          validate_arg/1]).
 -export([chashfun/1]).
 
+-include_lib("kernel/include/logger.hrl").
+
 -include("riak_pipe.hrl").
--include("stacktrace.hrl").
 
 -type riak_pipe_w_reduce_dict() :: dict:dict().
 
@@ -120,7 +121,7 @@ process({Key, Input}, _Last, #state{accs=Accs}=State) ->
             {ok, State#state{accs=dict:store(Key, OutAcc, Accs)}};
         {error, {Type, Error, Trace}} ->
             %%TODO: forward
-            lager:error(
+            ?LOG_ERROR(
               "~p:~p reducing:~n   ~P~n   ~P",
               [Type, Error, InAcc, 2, Trace, 5]),
             {ok, State}
@@ -161,7 +162,7 @@ handoff_acc(Key, HandoffAccs, LocalAccs, State) ->
         {ok, OutAcc} ->
             OutAcc;
         {error, {Type, Error, Trace}} ->
-                lager:error(
+                ?LOG_ERROR(
                   "~p:~p reducing handoff:~n   ~P~n   ~P",
                   [Type, Error, InAcc, 2, Trace, 5]),
             LocalAccs %% don't completely barf
@@ -176,8 +177,8 @@ reduce(Key, InAcc, #state{p=Partition, fd=FittingDetails}) ->
         {ok, OutAcc} = Fun(Key, InAcc, Partition, FittingDetails),
         true = is_list(OutAcc), %%TODO: nicer error
         {ok, OutAcc}
-    catch ?_exception_(Type, Error, StackToken) ->
-            {error, {Type, Error, ?_get_stacktrace_(StackToken)}}
+    catch Class:Reason:Stacktrace ->
+            {error, {Class, Reason, Stacktrace}}
     end.
 
 %% @doc Check that the arg is a valid arity-4 function.  See {@link

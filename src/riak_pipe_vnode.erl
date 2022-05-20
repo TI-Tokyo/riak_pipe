@@ -50,11 +50,11 @@
          status/2]).
 -export([hash_for_partition/1]).
 
+-include_lib("kernel/include/logger.hrl").
 -include_lib("riak_core/include/riak_core_vnode.hrl"). %% ?FOLD_REQ
 -include("riak_pipe.hrl").
 -include("riak_pipe_log.hrl").
 -include("riak_pipe_debug.hrl").
--include("stacktrace.hrl").
 
 -type riak_pipe_vnode_queue() :: queue:queue().
 
@@ -149,7 +149,7 @@ validate_or_exit(Thing, Validator, Msg) ->
     case Validator(Thing) of
         true -> Thing;
         false ->
-            lager:error(Msg++"~n   (found ~p)", [Thing]),
+            ?LOG_ERROR(Msg++"~n   (found ~p)", [Thing]),
             exit({invalid_config, {Msg, Thing}})
     end.
 
@@ -509,7 +509,7 @@ handle_command(#cmd_next_input{}=Cmd, _Sender, State) ->
 handle_command(#cmd_status{}=Cmd, _Sender, State) ->
     status_internal(Cmd, State);
 handle_command(Message, _Sender, State) ->
-    lager:info("Unhandled command: ~p", [Message]),
+    ?LOG_INFO("Unhandled command: ~p", [Message]),
     {noreply, State}.
 
 %% @doc Handle a handoff command.
@@ -821,15 +821,15 @@ new_worker(Fitting, #state{partition=P, worker_sup=Sup, worker_q_limit=WQL}) ->
                              blocking=queue:new(),
                              perf=Perf}};
             gone ->
-                lager:debug(
+                ?LOG_DEBUG(
                   "Fitting was gone before pipe worker startup"),
                 worker_startup_failed
         end
-    catch ?_exception_(Type, Reason, StackToken) ->
-            lager:error(
+    catch Class:Reason:Stacktrace ->
+            ?LOG_ERROR(
               "Pipe worker startup failed:~n"
               "   ~p:~p~n   ~p",
-              [Type, Reason, ?_get_stacktrace_(StackToken)]),
+              [Class, Reason, Stacktrace]),
             worker_startup_failed
     end.
 
