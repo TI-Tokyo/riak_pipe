@@ -27,6 +27,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Compile
-        run: make
+        run: apt-get update && apt-get install -y cmake libboost-dev && make compile
       - name: Run checks
         run: make check
