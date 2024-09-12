@@ -2,9 +2,11 @@ name: Erlang CI
 
 on:
   push:
-    branches: [ nhse-develop ]
+    branches:
+      - nhse-develop-3.4
   pull_request:
-    branches: [ nhse-develop ]
+    branches:
+      - nhse-develop-3.4
 
 
 jobs:
@@ -17,25 +19,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        otp: [22, 24, 25]
+        otp: [24, 26]
         os: [ubuntu-latest]
-        # OTP lower than 23 does not run on ubuntu-latest (22.04), see
-        # https://github.com/erlef/setup-beam#compatibility-between-operating-system-and-erlangotp
-        exclude:
-          - otp: 22
-            os: ubuntu-latest
-        include:
-          - otp: 22
-            os: ubuntu-20.04
 
     steps:
       - uses: lukka/get-cmake@latest
-      - uses: actions/checkout@v2
-      - name: Install dependencies (Ubuntu)
-        if: ${{ startsWith(matrix.os, 'ubuntu') }}
-        run: |
-          sudo apt-get -qq update
-          sudo apt-get -qq install libsnappy-dev libc6-dev
+      - uses: actions/checkout@v4
       - name: Install Erlang/OTP
         uses: erlef/setup-beam@v1
         with:
