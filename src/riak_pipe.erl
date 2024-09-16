@@ -322,7 +322,7 @@ queue_work(Pipe, Input) ->
 -spec queue_work(Pipe::pipe(),
                  Input::term(),
                  Timeout::riak_pipe_vnode:qtimeout())
-         -> ok | {error, riak_pipe_vnode:qerror()}.
+         -> ok | {error, [riak_pipe_vnode:qerror()]}.
 queue_work(#pipe{fittings=[{_,Head}|_]}, Input, Timeout)
   when Timeout =:= infinity; Timeout =:= noblock ->
     riak_pipe_vnode:queue_work(Head, Input, Timeout).
