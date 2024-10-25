@@ -1,7 +1,7 @@
 Riak Pipelines
 ==============
 
-[![Erlang CI Actions Status](https://github.com/basho/riak_pipe/workflows/Erlang%20CI/badge.svg)](https://github.com/basho/riak_pipe/actions)
+![Riak Pipe OpenRiak Status](https://github.com/OpenRiak/riak_pipe/actions/workflows/erlang.yml/badge.svg?branch=openriak-3.2)
 
 # Overview
 
