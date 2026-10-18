@@ -25,11 +25,21 @@
 %%      the client asks to find the head fitting.
 -module(riak_pipe_builder).
 
--compile({nowarn_deprecated_function, 
-            [{gen_fsm, start_link, 3},
-                {gen_fsm, sync_send_event, 2},
-                {gen_fsm, sync_send_event, 3},
-                {gen_fsm, sync_send_all_state_event, 2}]}).
+-compile([{nowarn_deprecated_function,
+           [{gen_fsm, start_link, 3},
+            {gen_fsm, send_event, 2},
+            {gen_fsm, code_change, 4},
+            {gen_fsm, handle_event, 3},
+            {gen_fsm, handle_info, 3},
+            {gen_fsm, handle_sync_event, 4},
+            {gen_fsm, sync_send_all_state_event, 2},
+            {gen_fsm, sync_send_event, 2},
+            {gen_fsm, sync_send_event, 3},
+            {gen_fsm, init, 1},
+            {gen_fsm, terminate, 3}
+           ]},
+          nowarn_deprecated_callback
+         ]).
 
 -behaviour(gen_fsm).
 
